@@ -4,6 +4,28 @@ RBC.CONST.SCALE = 1.05;
 RBC.CONST.TEXTURE_BOX =  "./images/enchant9.png";
 RBC.Methods = {};
 
+RBC.StartCube = enchant.Class.create(enchant.gl.primitive.Cube, {
+        initialize: function(scale){
+            enchant.gl.primitive.Cube.call(this, scale);
+            var core = enchant.Core.instance;
+            this.mesh.setBaseColor("#ffffff");
+            this.mesh.texture.ambient = [0.3,0.3,0.3,0.5];
+            this.rotationApply(new Quat(0, 1, 0, Math.PI/180 * 45));
+
+
+            this.rotApply = function(angle, spd, targ){
+                var that = this;
+                core.addEventListener('enterframe', function(){
+                        angle -= spd;
+                        targ.rotationApply(new Quat(0, 1, 0, Math.PI/180 * spd));
+                        if( Math.abs(angle) <= 0){
+                        console.log("g");
+                            this.removeEventListener('enterframe', arguments.callee);
+                        }
+                });
+            }
+        }
+});
 RBC.Cubes = enchant.Class.create(enchant.gl.primitive.Cube, {
         initialize: function(scale){
             enchant.gl.primitive.Cube.call(this, scale);
@@ -79,9 +101,7 @@ RBC.TouchController = {
     currentX: 0,
     currentY: 0,
     judgeLength: 10,
-
 }
-
 RBC.Methods.createCubes = function(){
     var scene = enchant.Core.instance.currentScene3D;
     RBC.cubes = [];
@@ -410,15 +430,11 @@ var game_start = function(){
     var random_panel = function(){
         return (Math.round(Math.random()*100)%3 -1) * scale;
     };
-
     //なんでかloop()やrepeat()がうまく働かないので手書き
     exlabel.tl.then(function(){
             RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
     }).delay(5).then(function(){
             RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
-    })
-    .delay(5).then(function(){
-            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
     }).delay(5).then(function(){
             RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
     }).delay(5).then(function(){
@@ -439,7 +455,9 @@ var game_start = function(){
             RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
     }).delay(5).then(function(){
             RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
-    })
+    }).delay(5).then(function(){
+            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
+    });
     //			
 
 };

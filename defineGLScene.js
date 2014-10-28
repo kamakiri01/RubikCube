@@ -110,6 +110,50 @@ RBC.Methods.initGameCamera = function(){
 }
 
 
+RBC.Methods.initStartCamera = function(){
+    var core = enchant.Core.instance;
+    var scene = enchant.Core.instance.currentScene3D;
+    var camera = RBC.Camera.instance;
+    camera.x = 2;
+    camera.y = 10;
+    camera.z = 25;
+    camera.centerX = 2;
+    camera.centerY = 0;
+    camera.centerZ = 0;
+}
+RBC.StartCubes = [];
 RBC.Methods.createStartScene = function(){
+    var scene = enchant.Core.instance.currentScene3D;
+    var scale = 0.32;
+    var fix = scale/0.5;
+    var w = 16;
+    var h = 16;
+    for(var i=0;i<w;i++){
+        for(var j=0;j<h;j++){
+            var b = new RBC.StartCube(scale);
+            b.x = (i - w/2 + (j%2)/1.4) * fix + i * 0.27 ;
+            b.y = (j - h/2) * fix;
+            b.z = (j - h/2)*(-1) * fix * 0.7;
 
- }
+            b.distCenter = Math.sqrt( (i-w/2)*(i-w/2) + (j-h/2)*(j-h/2) );
+            if( i === w/2 && j === h/2){
+            }else{
+                b.distCenter += 0.1;
+            }
+            b.addEventListener('enterframe', function(){
+                    if(this.age % (100) === Math.round(this.distCenter*10)){
+                        b.rotApply(90, 5, this);
+                    }
+            });
+            scene.addChild(b);
+            RBC.StartCubes.push(b);
+        }
+    }
+}
+RBC.Methods.clearStartScene = function(){
+    var scene = enchant.Core.instance.currentScene3D;
+    var len = RBC.StartCubes.length;
+    for (var i=len-1;i>= 0;i--){
+        scene.removeChild(RBC.StartCubes[i])
+    }
+}
