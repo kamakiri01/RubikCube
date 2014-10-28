@@ -44,10 +44,43 @@ RBC.Cubes = enchant.Class.create(enchant.gl.primitive.Cube, {
             ];
             this.mesh.texture.ambient = [0.3,0.3,0.3,0.5];
             this.addEventListener('touchstart', function(e){
+                    RBC.TouchController.startX = e.x;
+                    RBC.TouchController.startY = e.y;
+                    RBC.TouchController.currentX = e.x;
+                    RBC.TouchController.currentY = e.y;
+                    RBC.TouchController.isTouch = true;
                     RBC.Methods.getCurrentTouchCube(this, e);
-            })
+            });
+            this.addEventListener('touchmove', function(e){
+                    RBC.TouchController.currentX = e.x;
+                    RBC.TouchController.currentY = e.y;
+            
+            });
+            this.addEventListener('touchend', function(e){
+                    var x = RBC.TouchController.startX;
+                    var y = RBC.TouchController.startY;
+                    var dx = e.x - x;
+                    var dy = e.y - y;
+                    var d = Math.sqrt(dx*dx + dy*dy);
+                    if(d > RBC.TouchController.judgeLength){
+                        RBC.Methods.rotCurrentTouchCube(dx, dy, this, e);
+                    }
+                    //end
+                    RBC.TouchController.startX = 0;
+                    RBC.TouchController.startY = 0;
+                    RBC.TouchController.isTouch = false;
+            });
         }
 });
+RBC.TouchController = {
+    isTouch: false,
+    startX: 0,
+    startY: 0,
+    currentX: 0,
+    currentY: 0,
+    judgeLength: 10,
+
+}
 
 RBC.Methods.createCubes = function(){
     var scene = enchant.Core.instance.currentScene3D;
@@ -107,7 +140,7 @@ RBC.Methods.rotCube = function(axis, panel, angle, spd){
         core.addEventListener('enterframe', function(){
                 angle -= spd;
                 RBC.Methods.rotateMatrix(1, 0, 0, axis, panel, spd);
-                if( angle <= 0){ 
+                if( Math.abs(angle) <= 0){ 
                     this.removeEventListener('enterframe', arguments.callee);
                     RBC.Methods.adjust_cube();
                     RBC.Methods.proxy_axis(axis, panel);
@@ -119,7 +152,7 @@ RBC.Methods.rotCube = function(axis, panel, angle, spd){
         core.addEventListener('enterframe', function(){
                 angle -= spd;
                 RBC.Methods.rotateMatrix(0, 1, 0, axis, panel, spd);
-                if( angle <= 0){
+                if( Math.abs(angle) <= 0){
                     this.removeEventListener('enterframe', arguments.callee);
                     RBC.Methods.adjust_cube();
                     RBC.Methods.proxy_axis(axis, panel);
@@ -132,7 +165,7 @@ RBC.Methods.rotCube = function(axis, panel, angle, spd){
                 angle -= spd;
                 RBC.Methods.rotateMatrix(0, 0, 1, axis, panel, spd);
 
-                if( angle <= 0){
+                if( Math.abs(angle) <= 0){
                     this.removeEventListener('enterframe', arguments.callee);
                     RBC.Methods.adjust_cube();
                     RBC.Methods.proxy_axis(axis, panel);
@@ -246,10 +279,34 @@ RBC.Methods.array_compare = function array_compare (a1,a2){
     }
 };
 RBC.Methods.getCurrentTouchCube = function(cube,e ){
-    console.log(e.x + ", " + e.y);
-    console.log(cube.i + ", " + cube.j + ", " + cube.k);
+    //ここでキューブのタッチされた面を検出する
+    console.log({cx:cube.x, cy:cube.y, cz:cube.z})
+    var r = worldToScreen(cube.x, cube.y, cube.z);
+    console.log(r);
+};
+RBC.Methods.rotCurrentTouchCube = function(dx, dy, cube, e){
+    var r = worldToScreen(cube.x, cube.y, cube.z);
+    if(RBC.TouchController.startX < r.x){
+        console.log("touch Left");
+    }else{
+        console.log("touch Right");
+    }
 
-}
+    if(dx < 0 && Math.abs(dx) > Math.abs(dy)){
+        console.log("move Left");
+        RBC.Methods.rotCube("y", cube.y, -90, -10);
+        console.log("cube.y is " + cube.y);
+    }else if(Math.abs(dx) > Math.abs(dy)){
+        console.log("move Right");
+        RBC.Methods.rotCube("y", cube.y, 90, 10);
+        console.log("cube.y is " + cube.y);
+    }
+    if(dy < 0 && Math.abs(dx) <= Math.abs(dy)){
+        console.log("move Up");
+    }else if(Math.abs(dx) <= Math.abs(dy)){
+        console.log("move Down");
+    }
+};
 
 
 //----------シャッフル処理
@@ -303,4 +360,26 @@ var game_start = function(){
 
 };
 
+var worldToScreen = function(x, y, z){
+    var mul = function(m1, m2) {
+        return mat4.multiply(m1, m2, mat4.create());
+    }
+    var core = enchant.Core.instance;
+    var scene = core.currentScene3D;
+    var camera = scene.getCamera();
+    // プロジェクション行列
+    var pm = mat4.perspective(20, core.width / core.height, 1.0, 1000.0);
+    // ビュー行列
+    var vm = mat4.lookAt([ camera.x, camera.y, camera.z ], 
+        [camera.centerX, camera.centerY, camera.centerZ ], 
+        [camera.upVectorX, camera.upVectorY, camera.upVectorZ ]);
+
+    var v = [ x, y, z, 1 ];
+    var sc = mat4.multiplyVec4(mul(pm, vm), [ x, y, z, 1 ]);
+
+    var scX = (1 - (-sc[0] / sc[3])) * (core.width / 2);
+    var scY = (1 - (sc[1] / sc[3])) * (core.height / 2);
+
+    return {x:scX, y:scY};
+};
 

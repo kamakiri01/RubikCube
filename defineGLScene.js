@@ -43,13 +43,13 @@ RBC.Methods.initGameCamera = function(){
     //カメラ位置と方向を設定
     var camera = RBC.Camera.instance;
     camera.z = 15 * distScale;
-    camera.y = 7;
+    camera.y = 4;
     camera.x = 15 * distScale;
     camera.centerX = 0;
     camera.centerY = 0;
     camera.centerZ = 0;
     //カメラ回転系操作
-    var distScale = 11;
+    var distScale = 15;
     var rotScale = 1;
     var oldX = 0;
     RBC.Camera.r = 10;
@@ -75,9 +75,11 @@ RBC.Methods.initGameCamera = function(){
             RBC.Camera.isTouch = true;
     });
     core.rootScene.addEventListener('touchmove', function(e) {
-            RBC.Camera.r += (e.x - oldX) / 800 * Math.PI*2;
-            RBC.Camera.r = RBC.Camera.r % (Math.PI*2);
-            oldX = e.x;
+            if(RBC.Camera.isTouch = true && RBC.TouchController.isTouch === false){
+                RBC.Camera.r += (e.x - oldX) / 800 * Math.PI*2;
+                RBC.Camera.r = RBC.Camera.r % (Math.PI*2);
+                oldX = e.x;
+            }
     });
     core.rootScene.addEventListener('touchend', function(e){
             //調整
