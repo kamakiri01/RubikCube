@@ -143,7 +143,7 @@ RBC.Methods.rotCube = function(axis, panel, angle, spd){
                 if( Math.abs(angle) <= 0){ 
                     this.removeEventListener('enterframe', arguments.callee);
                     RBC.Methods.adjust_cube();
-                    RBC.Methods.proxy_axis(axis, panel);
+                    RBC.Methods.proxy_axis(axis, panel, spd);
                     check_serialize();
                     console.log("proxy set. x");
                 }
@@ -155,7 +155,7 @@ RBC.Methods.rotCube = function(axis, panel, angle, spd){
                 if( Math.abs(angle) <= 0){
                     this.removeEventListener('enterframe', arguments.callee);
                     RBC.Methods.adjust_cube();
-                    RBC.Methods.proxy_axis(axis, panel);
+                    RBC.Methods.proxy_axis(axis, panel, spd);
                     check_serialize();
                     console.log("proxy set. y");
                 }
@@ -168,7 +168,7 @@ RBC.Methods.rotCube = function(axis, panel, angle, spd){
                 if( Math.abs(angle) <= 0){
                     this.removeEventListener('enterframe', arguments.callee);
                     RBC.Methods.adjust_cube();
-                    RBC.Methods.proxy_axis(axis, panel);
+                    RBC.Methods.proxy_axis(axis, panel, spd);
                     check_serialize();
                     console.log("proxy set. z");
                 }
@@ -233,7 +233,7 @@ RBC.Methods.adjust_cube = function adjust_cube(){
     }			
 };
 //----------回転によるローカル座標軸の変化を吸収する代理軸の管理
-RBC.Methods.proxy_axis = function proxy_axis(axis, panel){
+RBC.Methods.proxy_axis = function proxy_axis(axis, panel, angle){
     var cubes = RBC.cubes;
     console.log("proxy_axis active");
     for(var i=0; i<3; i++){ //x軸方向に３枚
@@ -242,20 +242,35 @@ RBC.Methods.proxy_axis = function proxy_axis(axis, panel){
                 if(axis === "x" && cubes[i][j][k].x === panel){ //回転軸の確認と、cubesが回るべきパネルであるか
                     //x軸回転の軸の遷移
                     console.log("proxy_axis_do X");
-                    cubes[i][j][k].iy = RBC.Methods.proxy_axis_do1(cubes[i][j][k].iy, cubes[i][j][k].ix);
-                    cubes[i][j][k].iz = RBC.Methods.proxy_axis_do1(cubes[i][j][k].iz, cubes[i][j][k].ix);
+                    if(angle > 0){
+                        cubes[i][j][k].iy = RBC.Methods.proxy_axis_do1(cubes[i][j][k].iy, cubes[i][j][k].ix);
+                        cubes[i][j][k].iz = RBC.Methods.proxy_axis_do1(cubes[i][j][k].iz, cubes[i][j][k].ix);
+                    }else{
+                        cubes[i][j][k].iy = RBC.Methods.proxy_axis_do1_inv(cubes[i][j][k].iy, cubes[i][j][k].ix);
+                        cubes[i][j][k].iz = RBC.Methods.proxy_axis_do1_inv(cubes[i][j][k].iz, cubes[i][j][k].ix);
+                    }
                 }
                 if(axis === "y" && cubes[i][j][k].y === panel){
                     //y軸回転の軸の遷移	
                     console.log("proxy_axis_do Y");
-                    cubes[i][j][k].iz = RBC.Methods.proxy_axis_do1(cubes[i][j][k].iz, cubes[i][j][k].iy);
-                    cubes[i][j][k].ix = RBC.Methods.proxy_axis_do1(cubes[i][j][k].ix, cubes[i][j][k].iy);
+                    if(angle > 0){
+                        cubes[i][j][k].iz = RBC.Methods.proxy_axis_do1(cubes[i][j][k].iz, cubes[i][j][k].iy);
+                        cubes[i][j][k].ix = RBC.Methods.proxy_axis_do1(cubes[i][j][k].ix, cubes[i][j][k].iy);
+                    }else{
+                        cubes[i][j][k].iz = RBC.Methods.proxy_axis_do1_inv(cubes[i][j][k].iz, cubes[i][j][k].iy);
+                        cubes[i][j][k].ix = RBC.Methods.proxy_axis_do1_inv(cubes[i][j][k].ix, cubes[i][j][k].iy);
+                    }
                 }
                 if(axis === "z" && cubes[i][j][k].z === panel){
                     //z軸回転の軸の遷移	
                     console.log("proxy_axis_do X");
-                    cubes[i][j][k].ix = RBC.Methods.proxy_axis_do1(cubes[i][j][k].ix, cubes[i][j][k].iz);
-                    cubes[i][j][k].iy = RBC.Methods.proxy_axis_do1(cubes[i][j][k].iy, cubes[i][j][k].iz);
+                    if(angle > 0){
+                        cubes[i][j][k].ix = RBC.Methods.proxy_axis_do1(cubes[i][j][k].ix, cubes[i][j][k].iz);
+                        cubes[i][j][k].iy = RBC.Methods.proxy_axis_do1(cubes[i][j][k].iy, cubes[i][j][k].iz);
+                    }else{
+                        cubes[i][j][k].ix = RBC.Methods.proxy_axis_do1_inv(cubes[i][j][k].ix, cubes[i][j][k].iz);
+                        cubes[i][j][k].iy = RBC.Methods.proxy_axis_do1_inv(cubes[i][j][k].iy, cubes[i][j][k].iz);
+                    }
                 }
             }
         }
@@ -265,6 +280,9 @@ RBC.Methods.proxy_axis = function proxy_axis(axis, panel){
 //正確には、回すべき軸をローカル系で見立てたときに見えるベクトルを使って回す。
 RBC.Methods.proxy_axis_do1 = function(proxyVec, proxyaxis){
     return mat4.multiplyVec3((new Quat(proxyaxis[0],proxyaxis[1],proxyaxis[2],  -Math.PI/180 *90)).toMat4(mat4.create()), proxyVec);
+};		
+RBC.Methods.proxy_axis_do1_inv = function(proxyVec, proxyaxis){
+    return mat4.multiplyVec3((new Quat(proxyaxis[0],proxyaxis[1],proxyaxis[2],  Math.PI/180 *90)).toMat4(mat4.create()), proxyVec);
 };		
 RBC.Methods.array_compare = function array_compare (a1,a2){
     if(a1.length !== a2.length){
@@ -286,12 +304,15 @@ RBC.Methods.getCurrentTouchCube = function(cube,e ){
 };
 RBC.Methods.rotCurrentTouchCube = function(dx, dy, cube, e){
     var r = worldToScreen(cube.x, cube.y, cube.z);
+    var side;
     if(RBC.TouchController.startX < r.x){
         console.log("touch Left");
+        side = "left";
     }else{
         console.log("touch Right");
+        side = "right";
     }
-
+//Y軸回転
     if(dx < 0 && Math.abs(dx) > Math.abs(dy)){
         console.log("move Left");
         RBC.Methods.rotCube("y", cube.y, -90, -10);
@@ -301,10 +322,73 @@ RBC.Methods.rotCurrentTouchCube = function(dx, dy, cube, e){
         RBC.Methods.rotCube("y", cube.y, 90, 10);
         console.log("cube.y is " + cube.y);
     }
+    //XZ回転
+    var targR = RBC.Camera.targR;
+    var n = targR - Math.PI/4; // Math..PI * (0~3)
+    //上スライド
     if(dy < 0 && Math.abs(dx) <= Math.abs(dy)){
-        console.log("move Up");
+        console.log("move Up ");
+        //0
+        if(n >= 0 && n < Math.PI/2){
+            if(side === "right"){
+                RBC.Methods.rotCube("z", cube.z, 90, 10);
+            }else if( side === "left"){
+                RBC.Methods.rotCube("x", cube.x, -90, -10);
+            }
+        //1
+        }else if(n >= Math.PI/2 && n < Math.PI){
+            if(side === "right"){
+                RBC.Methods.rotCube("x", cube.x, -90, -10);
+            }else if( side === "left"){
+                RBC.Methods.rotCube("z", cube.z, -90, -10);
+            }
+        //2
+        }else if(n >= Math.PI && n < Math.PI/2 + Math.PI ){
+            if(side === "right"){
+                RBC.Methods.rotCube("z", cube.z, -90, -10);
+            }else if( side === "left"){
+                RBC.Methods.rotCube("x", cube.x, 90, 10);
+            }
+        //3
+        }else if(n >= Math.PI/2 + Math.PI){
+            if(side === "right"){
+                RBC.Methods.rotCube("x", cube.x, 90, 10);
+            }else if( side === "left"){
+                RBC.Methods.rotCube("z", cube.z, 90, 10);
+            }
+        }
+    //下スライド
     }else if(Math.abs(dx) <= Math.abs(dy)){
-        console.log("move Down");
+        console.log("move Down ");
+        //0
+        if(n >= 0 && n < Math.PI/2){
+            if(side === "right"){
+                RBC.Methods.rotCube("z", cube.z, -90, -10);
+            }else if( side === "left"){
+                RBC.Methods.rotCube("x", cube.x, 90, 10);
+            }
+        //1
+        }else if(n >= Math.PI/2 && n < Math.PI){
+            if(side === "right"){
+                RBC.Methods.rotCube("x", cube.x, 90, 10);
+            }else if( side === "left"){
+                RBC.Methods.rotCube("z", cube.z, 90, 10);
+            }
+        //2
+        }else if(n >= Math.PI && n < Math.PI/2 + Math.PI ){
+            if(side === "right"){
+                RBC.Methods.rotCube("z", cube.z, 90, 10);
+            }else if( side === "left"){
+                RBC.Methods.rotCube("x", cube.x, -90, -10);
+            }
+        //3
+        }else if(n >= Math.PI/2 + Math.PI){
+            if(side === "right"){
+                RBC.Methods.rotCube("x", cube.x, -90, -10);
+            }else if( side === "left"){
+                RBC.Methods.rotCube("z", cube.z, -90, -10);
+            }
+        }
     }
 };
 

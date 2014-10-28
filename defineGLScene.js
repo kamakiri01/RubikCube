@@ -7,12 +7,19 @@ RBC.Methods.initScene3d = function(){
 
     //----------カメラ、光源の設定		
     //光源の設定
-    var light = new DirectionalLight(); // 平行光源生成
-    light.directionX =-1;            // 向き
-    light.directionY = 1;
-    light.directionZ = 2;
-    light.color = [1.0, 1.0, 1.0];      // 色
-    scene.setDirectionalLight(light);   // scene にセット
+
+    var dLight = new DirectionalLight();
+    dLight.color = [0.4, 0.4, 0.4];
+    dLight.directionX = 0;
+    dLight.directionY = 10;
+    dLight.directionZ = 0;
+
+    var aLight = new AmbientLight();
+    aLight.color = [2.0, 2.0, 2.0];
+    scene.backgroundColor = [0.1, 0.2, 0.25, 1];
+    scene.setDirectionalLight(dLight);
+    scene.setAmbientLight(aLight);
+
 
     //カメラ情報表示のラベル
     var info_label = new Label("");
@@ -27,7 +34,7 @@ RBC.Methods.initScene3d = function(){
     RBC.Camera.instance = scene.getCamera();
     var camera = RBC.Camera.instance;
     camera.z = 15 * distScale;
-    camera.y = 2;
+    camera.y = 6;
     camera.x = 15 * distScale;
     camera.centerX = 0;
     camera.centerY = 0;
@@ -43,7 +50,7 @@ RBC.Methods.initGameCamera = function(){
     //カメラ位置と方向を設定
     var camera = RBC.Camera.instance;
     camera.z = 15 * distScale;
-    camera.y = 4;
+    camera.y = 2;
     camera.x = 15 * distScale;
     camera.centerX = 0;
     camera.centerY = 0;
@@ -67,7 +74,7 @@ RBC.Methods.initGameCamera = function(){
                 }
             }
             camera.x = Math.cos(RBC.Camera.r*rotScale) * distScale;
-            camera.y = 0.7 * distScale;
+            camera.y = 0.4 * distScale;
             camera.z = Math.sin(RBC.Camera.r*rotScale) * distScale;
     });
     core.rootScene.addEventListener('touchstart', function(e) {
