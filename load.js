@@ -18,10 +18,12 @@ window.onload = function(){
         t.y = 200;
                 enchant.Core.instance.currentScene.addChild(t);
         t.addEventListener('touchstart', function(){
-        RBC.Methods.clearStartScene();
+                RBC.Methods.clearStartScene();
+                enchant.Core.instance.currentScene.removeChild(t);
 
-        RBC.Methods.initGameCamera();
-        RBC.Methods.createCubes();
+                RBC.Methods.initGameCamera();
+                RBC.Methods.createCubes();
+                RBC.Methods.game_start();
         })
 
     };

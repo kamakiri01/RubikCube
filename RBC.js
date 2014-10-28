@@ -414,7 +414,7 @@ RBC.Methods.rotCurrentTouchCube = function(dx, dy, cube, e){
 
 
 //----------シャッフル処理
-var game_start = function(){
+RBC.Methods.game_start = function(){
     //----------x,y,zのいずれかを返す関数
     var random_axis = function(){
         var num = Math.round(Math.random()*100)%3; //0~2
@@ -427,11 +427,12 @@ var game_start = function(){
         }
     };
     //----------パネルを返す
+    var scale = RBC.CONST.SCALE;
     var random_panel = function(){
         return (Math.round(Math.random()*100)%3 -1) * scale;
     };
     //なんでかloop()やrepeat()がうまく働かないので手書き
-    exlabel.tl.then(function(){
+    enchant.Core.instance.currentScene.tl.then(function(){
             RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
     }).delay(5).then(function(){
             RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
