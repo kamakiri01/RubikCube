@@ -2,6 +2,8 @@ var RBC = {};
 RBC.CONST = {};
 RBC.CONST.SCALE = 1.05;
 RBC.CONST.TEXTURE_BOX =  "./images/enchant9.png";
+RBC.score = 0;
+RBC.difficult = 0; //default is easy
 RBC.Methods = {};
 
 RBC.StartCube = enchant.Class.create(enchant.gl.primitive.Cube, {
@@ -415,6 +417,7 @@ RBC.Methods.rotCurrentTouchCube = function(dx, dy, cube, e){
 
 //----------シャッフル処理
 RBC.Methods.game_start = function(){
+    RBC.score = enchant.Core.instance.frame;
     //----------x,y,zのいずれかを返す関数
     var random_axis = function(){
         var num = Math.round(Math.random()*100)%3; //0~2
@@ -432,33 +435,22 @@ RBC.Methods.game_start = function(){
         return (Math.round(Math.random()*100)%3 -1) * scale;
     };
     //なんでかloop()やrepeat()がうまく働かないので手書き
-    enchant.Core.instance.currentScene.tl.then(function(){
-            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
-    }).delay(5).then(function(){
-            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
-    }).delay(5).then(function(){
-            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
-    }).delay(5).then(function(){
-            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
-    }).delay(5).then(function(){
-            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
-    }).delay(5).then(function(){
-            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
-    }).delay(5).then(function(){
-            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
-    }).delay(5).then(function(){
-            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
-    }).delay(5).then(function(){
-            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
-    }).delay(5).then(function(){
-            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
-    }).delay(5).then(function(){
-            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
-    }).delay(5).then(function(){
-            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
-    }).delay(5).then(function(){
-            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
-    });
+    var times = RBC.difficult * 3;
+    var loopShuffle = function(){
+        if(times> 0){
+            times -= 1;
+            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 45);
+            setTimeout(loopShuffle, 200);
+        }
+    };
+    loopShuffle();
+//    enchant.Core.instance.currentScene.tl.then(function(){
+//            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
+//    }).delay(5).then(function(){
+//            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
+//    }).delay(5).then(function(){
+//            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
+//    });
     //			
 
 };

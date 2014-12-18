@@ -59,7 +59,7 @@ RBC.Methods.initGameCamera = function(){
     var rotScale = 1;
     var oldX = 0;
     RBC.Camera.r = 10;
-    RBC.Camera.targR = 10;
+    RBC.Camera.targR = 5.498;
     core.rootScene.addEventListener('enterframe', function(){
             if(RBC.Camera.isTouch === false){
                 var diff = RBC.Camera.targR - RBC.Camera.r;
