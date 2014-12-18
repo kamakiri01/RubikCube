@@ -20,7 +20,6 @@ RBC.Methods.initScene3d = function(){
     scene.setDirectionalLight(dLight);
     scene.setAmbientLight(aLight);
 
-
     //カメラ情報表示のラベル
     var info_label = new Label("");
     info_label.x = 10;
