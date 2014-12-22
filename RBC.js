@@ -13,7 +13,19 @@ RBC.BackButton = enchant.Class.create(enchant.Sprite, {
             var core = enchant.Core.instance;
             this.image = core.assets[RBC.CONST.IMAGE_BACK];
         }
-})
+});
+RBC.TimeCounter = enchant.Class.create(enchant.Label, {
+        initialize: function(){
+            enchant.Label.call(this, "");
+            var core = enchant.Core.instance;
+            this.font = "50px bold sans";
+            this.color = "red";
+            this.preText = "Time:";
+            this.addEventListener('enterframe', function(){
+                this.text = this.preText + Math.round(this.age/core.fps);;
+            });
+        }
+});
 
 RBC.StartCube = enchant.Class.create(enchant.gl.primitive.Cube, {
         initialize: function(scale){
@@ -23,14 +35,12 @@ RBC.StartCube = enchant.Class.create(enchant.gl.primitive.Cube, {
             this.mesh.texture.ambient = [0.3,0.3,0.3,0.5];
             this.rotationApply(new Quat(0, 1, 0, Math.PI/180 * 45));
 
-
             this.rotApply = function(angle, spd, targ){
                 var that = this;
                 core.addEventListener('enterframe', function(){
                         angle -= spd;
                         targ.rotationApply(new Quat(0, 1, 0, Math.PI/180 * spd));
                         if( Math.abs(angle) <= 0){
-                        console.log("g");
                             this.removeEventListener('enterframe', arguments.callee);
                         }
                 });
@@ -436,6 +446,10 @@ RBC.Methods.createScene2DModule = function(){
     });
     scene.addChild(bBut);
     //カウンタ
+    var count = new RBC.TimeCounter();
+    count.x = 300;
+    count.y = 15;
+    scene.addChild(count);
 };
 
 //----------シャッフル処理
