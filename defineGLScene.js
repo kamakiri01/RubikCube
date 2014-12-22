@@ -3,7 +3,6 @@ RBC.Camera.isTouch = false;
 RBC.Methods.initScene3d = function(){
     var core = enchant.Core.instance;
     var scene = new Scene3D();
-    scene.backgroundColor = [0.1, 0.2, 0.25, 1];
 
     //----------カメラ、光源の設定		
     //光源の設定
@@ -16,7 +15,7 @@ RBC.Methods.initScene3d = function(){
 
     var aLight = new AmbientLight();
     aLight.color = [2.0, 2.0, 2.0];
-    scene.backgroundColor = [0.1, 0.2, 0.25, 1];
+    scene.backgroundColor = [0.8, 0.8, 0.8, 1]; //bgcolor
     scene.setDirectionalLight(dLight);
     scene.setAmbientLight(aLight);
 

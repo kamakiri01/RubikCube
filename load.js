@@ -1,13 +1,15 @@
 enchant();
 
-    var TEXTURE_BOX = "enchant9.png";
+var TEXTURE_BOX = RBC.CONST.TEXTURE_BOX;
+var IMAGE_BACK = RBC.CONST.IMAGE_BACK;
 window.onload = function(){
     var core = new Core(512, 512);
 
-    core.preload(TEXTURE_BOX);
+    core.preload(TEXTURE_BOX, IMAGE_BACK);
     core.onload = function(){
-        var game_start = function(){
+        var game_start_seque = function(){
             RBC.Methods.clearStartScene();
+            RBC.Methods.createScene2DModule();
             RBC.Methods.initGameCamera();
             RBC.Methods.createCubes();
             RBC.Methods.game_start();
@@ -40,7 +42,7 @@ window.onload = function(){
                         enchant.Core.instance.currentScene.removeChild(n1);
                         enchant.Core.instance.currentScene.removeChild(n2);
                         RBC.difficult = 3;
-                        game_start();
+                        game_start_seque();
                 });
                 var n1 = new Label("");
                 n1.text = "NORMAL";
@@ -54,7 +56,7 @@ window.onload = function(){
                         enchant.Core.instance.currentScene.removeChild(n1);
                         enchant.Core.instance.currentScene.removeChild(n2);
                         RBC.difficult = 2;
-                        game_start();
+                        game_start_seque();
                 });
                 var n2 = new Label("");
                 n2.text = "EASY";
@@ -68,7 +70,7 @@ window.onload = function(){
                         enchant.Core.instance.currentScene.removeChild(n1);
                         enchant.Core.instance.currentScene.removeChild(n2);
                         RBC.difficult = 1;
-                        game_start();
+                        game_start_seque();
                 });
 
         });

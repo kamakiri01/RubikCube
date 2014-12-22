@@ -2,9 +2,18 @@ var RBC = {};
 RBC.CONST = {};
 RBC.CONST.SCALE = 1.05;
 RBC.CONST.TEXTURE_BOX =  "./images/enchant9.png";
+RBC.CONST.IMAGE_BACK = "./images/back.png";
 RBC.score = 0;
 RBC.difficult = 0; //default is easy
 RBC.Methods = {};
+
+RBC.BackButton = enchant.Class.create(enchant.Sprite, {
+        initialize: function(){
+            enchant.Sprite.call(this, 64, 64);
+            var core = enchant.Core.instance;
+            this.image = core.assets[RBC.CONST.IMAGE_BACK];
+        }
+})
 
 RBC.StartCube = enchant.Class.create(enchant.gl.primitive.Cube, {
         initialize: function(scale){
@@ -414,6 +423,20 @@ RBC.Methods.rotCurrentTouchCube = function(dx, dy, cube, e){
     }
 };
 
+//ゲームメイン画面のcanvas要素レイヤー
+RBC.Methods.createScene2DModule = function(){
+    var core = enchant.Core.instance;
+    var scene = core.currentScene;
+    //戻るボタン
+    var bBut = new RBC.BackButton();
+    bBut.x = 0;
+    bBut.y = 512 - 64;
+    bBut.addEventListener('touchstart', function(){
+       window.document.location.href = "native://score/reload"; 
+    });
+    scene.addChild(bBut);
+    //カウンタ
+};
 
 //----------シャッフル処理
 RBC.Methods.game_start = function(){
@@ -444,16 +467,9 @@ RBC.Methods.game_start = function(){
         }
     };
     loopShuffle();
-//    enchant.Core.instance.currentScene.tl.then(function(){
-//            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
-//    }).delay(5).then(function(){
-//            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
-//    }).delay(5).then(function(){
-//            RBC.Methods.rotCube(random_axis(), random_panel(), 90, 30);
-//    });
-    //			
-
 };
+
+
 
 var worldToScreen = function(x, y, z){
     var mul = function(m1, m2) {
