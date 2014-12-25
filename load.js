@@ -49,7 +49,7 @@ window.onload = function(){
                 //n0.color = "red";
                 var n0 = new Sprite(192, 64);
                 n0.image = core.assets[IMAGE_HARD];
-                n0.x = 215;
+                n0.x = 512/2 - 192/2;
                 n0.y = 200;
                 enchant.Core.instance.currentScene.addChild(n0);
                 n0.addEventListener('touchend', function(){
@@ -65,7 +65,7 @@ window.onload = function(){
                // n1.color = "red";
                var n1 = new Sprite(256, 64);
                n1.image = core.assets[IMAGE_NORMAL];
-                n1.x = 185;
+                n1.x = 512/2 - 256/2;
                 n1.y = 300;
                 enchant.Core.instance.currentScene.addChild(n1);
                 n1.addEventListener('touchend', function(){
@@ -81,7 +81,7 @@ window.onload = function(){
                // n2.color = "red";
                var n2 = new Sprite(192, 64);
                n2.image = core.assets[IMAGE_EASY];
-                n2.x = 215;
+                n2.x = 512/2 - 192/2;
                 n2.y = 400;
                 enchant.Core.instance.currentScene.addChild(n2);
                 n2.addEventListener('touchend', function(){
