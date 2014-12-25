@@ -44,7 +44,7 @@ RBC.StartCube = enchant.Class.create(enchant.gl.primitive.Cube, {
                             this.removeEventListener('enterframe', arguments.callee);
                         }
                 });
-            }
+            };
         }
 });
 RBC.Cubes = enchant.Class.create(enchant.gl.primitive.Cube, {
