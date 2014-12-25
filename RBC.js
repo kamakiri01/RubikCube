@@ -60,13 +60,10 @@ RBC.Cubes = enchant.Class.create(enchant.gl.primitive.Cube, {
             var fx = 0.5, fy = 0.5, fz = 0.5; //キューブのローカル座標内でテクスチャを貼る位置場所を処理する変数
             this.mesh.vertices = [ //テクスチャを貼るオブジェクトのローカル座標での面の座標を指定（回転方向で法線が決まる？）
                 fx, fy, fz,  -fx, fy, fz,  -fx,-fy, fz,   fx,-fy, fz,  // v0-v1-v2-v3 front
-                //fx, fy, fz,   fx,-fy, fz,   fx,-fy,-fz,   fx, fy,-fz,  // v0-v3-v4-v5 right
                 fx, fy,-fz,  fx,-fy,-fz,      fx,-fy, fz,   fx, fy, fz,// v0-v3-v4-v5 right
-                //fx, fy, fz,   fx, fy,-fz,  -fx, fy,-fz,  -fx, fy, fz,  // v0-v5-v6-v1 top
                  -fx, fy, fz,  -fx, fy,-fz, fx, fy,-fz,   fx, fy, fz,  // v0-v5-v6-v1 top
                 -fx, fy, fz,  -fx, fy,-fz,  -fx,-fy,-fz,  -fx,-fy, fz,  // v1-v6-v7-v2 left
                 -fx,-fy,-fz,   fx,-fy,-fz,   fx,-fy, fz,  -fx,-fy, fz,  // v7-v4-v3-v2 bottom
-                //fx,-fy,-fz,  -fx,-fy,-fz,  -fx, fy,-fz,   fx, fy,-fz   // v4-v7-v6-v5 back
                 fx, fy,-fz,   -fx, fy,-fz,    -fx,-fy,-fz, fx,-fy,-fz // v4-v7-v6-v5 back
             ];
             this.mesh.normals = [ //ローカル座標で法線の方向を指定する（テクスチャを貼る表裏を決める）v0
@@ -122,7 +119,7 @@ RBC.TouchController = {
     currentX: 0,
     currentY: 0,
     judgeLength: 10,
-}
+};
 RBC.Methods.createCubes = function(){
     var scene = enchant.Core.instance.currentScene3D;
     RBC.cubes = [];
@@ -185,7 +182,7 @@ RBC.Methods.rotCube = function(axis, panel, angle, spd){
                     this.removeEventListener('enterframe', arguments.callee);
                     RBC.Methods.adjust_cube();
                     RBC.Methods.proxy_axis(axis, panel, spd);
-                    check_serialize();
+                    RBC.Methods.check_serialize();
                     console.log("proxy set. x");
                 }
         });
@@ -197,7 +194,7 @@ RBC.Methods.rotCube = function(axis, panel, angle, spd){
                     this.removeEventListener('enterframe', arguments.callee);
                     RBC.Methods.adjust_cube();
                     RBC.Methods.proxy_axis(axis, panel, spd);
-                    check_serialize();
+                    RBC.Methods.check_serialize();
                     console.log("proxy set. y");
                 }
         });
@@ -210,7 +207,7 @@ RBC.Methods.rotCube = function(axis, panel, angle, spd){
                     this.removeEventListener('enterframe', arguments.callee);
                     RBC.Methods.adjust_cube();
                     RBC.Methods.proxy_axis(axis, panel, spd);
-                    check_serialize();
+                    RBC.Methods.check_serialize();
                     console.log("proxy set. z");
                 }
         });
@@ -432,7 +429,6 @@ RBC.Methods.rotCurrentTouchCube = function(dx, dy, cube, e){
         }
     }
 };
-
 //ゲームメイン画面のcanvas要素レイヤー
 RBC.Methods.createScene2DModule = function(){
     var core = enchant.Core.instance;
@@ -451,16 +447,15 @@ RBC.Methods.createScene2DModule = function(){
     count.y = 15;
     scene.addChild(count);
 };
-
 //----------シャッフル処理
 RBC.Methods.game_start = function(){
     RBC.score = enchant.Core.instance.frame;
     //----------x,y,zのいずれかを返す関数
     var random_axis = function(){
         var num = Math.round(Math.random()*100)%3; //0~2
-        if(num == 0){
+        if(num === 0){
             return "x";
-        }else if(num == 1){
+        }else if(num === 1){
             return "y";
         }else{
             return "z";
@@ -482,13 +477,10 @@ RBC.Methods.game_start = function(){
     };
     loopShuffle();
 };
-
-
-
 var worldToScreen = function(x, y, z){
     var mul = function(m1, m2) {
         return mat4.multiply(m1, m2, mat4.create());
-    }
+    };
     var core = enchant.Core.instance;
     var scene = core.currentScene3D;
     var camera = scene.getCamera();
@@ -507,4 +499,40 @@ var worldToScreen = function(x, y, z){
 
     return {x:scX, y:scY};
 };
+RBC.Methods.check_serialize = function(){
+    //ゲームが開始されている
+    var ix = [0,0,0];
+    var iy = [0,0,0];
+    var iz = [0,0,0];
 
+    for(var i=0; i<3; i++){ //x軸方向に３枚
+        for(var j=0; j<3; j++){ //y軸方向に３本
+            for(var k=0; k<3; k++){ //z軸方向に３個
+                vec3.add(ix, RBC.cubes[i][j][k].ix);
+                vec3.add(iy, RBC.cubes[i][j][k].iy);
+                vec3.add(iz, RBC.cubes[i][j][k].iz);
+            }
+        }
+    }
+
+    console.log(Math.round(ix[0]) +", "+ Math.round(ix[1]) +", "+ Math.round(ix[2]));
+    console.log(Math.round(iy[0]) +", "+ Math.round(iy[1]) +", "+ Math.round(iy[2]));
+    console.log(Math.round(iz[0]) +", "+ Math.round(iz[1]) +", "+ Math.round(iz[2]));
+
+    //27になる要素が各ベクトルにあればシリアライズされているとする
+    if( (Math.abs(Math.round(ix[0])) == 27 || Math.abs(Math.round(ix[1])) == 27 || Math.abs(Math.round(ix[2])) == 27 )&& 
+        (Math.abs(Math.round(iy[0])) == 27 || Math.abs(Math.round(iy[1])) == 27 || Math.abs(Math.round(iy[2])) == 27 )&& 
+        (Math.abs(Math.round(iz[0])) == 27 || Math.abs(Math.round(iz[1])) == 27 || Math.abs(Math.round(iz[2])) == 27 ) 
+    ){
+        //game end
+        console.log("game clear!");
+        game_ending();
+        //game.end(counter, score + "秒でルービックキューブを解きました！");
+    };
+};
+var game_ending = function(){
+    var score = enchant.Core.instance.frame - RBC.score;
+    var trueScore = 1000 / score * 500;
+    console.log("score is " + trueScore);
+    window.document.location.href = "native://score/" + trueScore;
+};
