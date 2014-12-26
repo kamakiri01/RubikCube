@@ -8,16 +8,16 @@ RBC.Methods.initScene3d = function(){
     //光源の設定
 
     var dLight = new DirectionalLight();
-    dLight.color = [0.4, 0.4, 0.4];
+    dLight.color = [0.1, 0.1, 0.1];
     dLight.directionX = 0;
     dLight.directionY = 10;
     dLight.directionZ = 0;
 
     var aLight = new AmbientLight();
-    aLight.color = [2.0, 2.0, 2.0];
-    scene.backgroundColor = [0.8, 0.8, 0.8, 1]; //bgcolor
+    aLight.color = [3.0, 3.0, 3.0];
     scene.setDirectionalLight(dLight);
     scene.setAmbientLight(aLight);
+    scene.backgroundColor = [0.2, 0.2, 0.2, 0.5]; //bgcolor
 
     //カメラ情報表示のラベル
     var info_label = new Label("");
@@ -31,16 +31,16 @@ RBC.Methods.initScene3d = function(){
     //カメラ位置と方向を設定
     RBC.Camera.instance = scene.getCamera();
     var camera = RBC.Camera.instance;
+    //カメラ回転系操作
+    var distScale = 11;
+    var oldX = 0;
+    var r = 10;
     camera.z = 15 * distScale;
     camera.y = 6;
     camera.x = 15 * distScale;
     camera.centerX = 0;
     camera.centerY = 0;
     camera.centerZ = 0;
-    //カメラ回転系操作
-    var distScale = 11;
-    var oldX = 0;
-    var r = 10;
 }
 RBC.Methods.initGameCamera = function(){
     var core = enchant.Core.instance;
